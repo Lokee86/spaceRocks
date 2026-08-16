@@ -629,6 +629,7 @@ Use this section only for short, high-signal warnings that help a returning deve
 Current handoff points:
 
 * Space Rocks is in active development. Expect rough edges around newer systems.
+* **Rails test warning:** PostgreSQL is not started by the Rails test harness, native-Windows `bin/setup`/parallel test execution has known compatibility failures, the OpenAPI helper currently mishandles Windows drive-letter paths, and the main GitHub CI workflow does not run Rails/PostgreSQL tests. See [Current System Limits](limits/current-system-limits.md#rails--postgresql-test-infrastructure) before diagnosing API-server test failures.
 * The gameplay model is server-authoritative. Preserve authority boundaries when changing client presentation.
 * Single-player should remain usable without Rails unless the work explicitly touches backend/account behavior.
 * Generated packet and constants files should be regenerated through data-sync, not hand-edited as the source.

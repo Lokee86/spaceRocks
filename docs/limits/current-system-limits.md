@@ -59,6 +59,16 @@ Accepted practical ceilings that are not active bugs or roadmap work belong in [
 - Pickups have no `max_health` field.
 - Bullet/pickup collision damage is not enabled.
 
+### Rails / PostgreSQL test infrastructure
+
+- Rails tests do **not** provision or start PostgreSQL. `services/api-server/bin/ci` invokes `bin/setup --skip-server`, and `bin/setup` runs `bin/rails db:prepare`; both assume a reachable PostgreSQL server already exists.
+- Native-Windows execution of `services/api-server/bin/setup` is currently broken at its child `system!("bin/rails db:prepare")` call because the shebang-based `bin/rails` script is not directly executable by the Windows process API (`Errno::ENOEXEC`). WSL/Linux is the normal supported path; on native Windows the equivalent setup must currently be invoked explicitly through Ruby/Bundler.
+- The Rails test helper uses `parallelize(workers: :number_of_processors)`. On native Windows this attempts process-based parallelization and fails because Ruby does not implement `fork()`. A single-worker run can be forced with `PARALLEL_WORKERS=1` for local diagnosis.
+- After forcing a single worker, OpenAPI contract tests currently fail on native Windows because the contract helper passes a `C:/.../shared/contracts/http/` filesystem path through URI handling that expects an absolute URI path. During the 2026-08-16 corpus qualification this produced 52 errors across 175 tests, with 0 assertion failures before those path errors.
+- The main `.github/workflows/ci.yml` currently has no Rails/PostgreSQL job or PostgreSQL service container, so the Rails suite is not part of the ordinary repository CI gate.
+- Local database environment and the running PostgreSQL instance must agree on host/port. During the 2026-08-16 qualification, the repo-local `.env` specified port 5432 while the actual local PostgreSQL 18 service was listening on 5433. This configuration drift can masquerade as a Rails/PostgreSQL failure and must be reconciled before relying on local API tests.
+- `db:prepare` cannot repair a completely absent test database in the affected native-Windows setup when libpq reports the missing database as a generic `PG::ConnectionBad`. The configured `space_rocks_api` role does have `CREATEDB`; explicitly creating `space_rocks_api_test` allowed `RAILS_ENV=test rails db:prepare` to complete successfully during qualification.
+
 ### Player Data
 
 - Matchmaking and leaderboards are not implemented.
