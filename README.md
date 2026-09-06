@@ -1,14 +1,22 @@
 # Space Rocks
 
-Space Rocks is an Asteroids-inspired game project with a Godot client, a Go realtime game server, and a Ruby/Rails API server for backend account and platform concerns.
+**Server-authoritative multiplayer arcade combat built with Godot, Go, and Rails.**
 
-Follow the [Devlog!](https://space-rocks.laughingskull.ca/)
+Space Rocks is an Asteroids-inspired online action game that has grown from a playable arcade prototype into a multi-service multiplayer system. The Godot client presents the game, a Go server owns authoritative realtime simulation and match state, and a Ruby/Rails API owns account, authentication, and platform services.
 
-The project is in active development. Expect rough edges while systems, documentation, and tooling continue to move.
+**[Watch the gameplay demo](https://www.youtube.com/watch?v=8UXrnRvapHQ)** · **[Download and play the v0.2.1 alpha](https://github.com/Lokee86/space-rocks/releases/tag/v0.2.1)** · **[Read the devlog](https://space-rocks.laughingskull.ca/)**
+
+The public alpha is packaged for Windows and macOS and includes hosted multiplayer plus packaged single-player support. The project remains in active development, but it is buildable, downloadable, and playable outside the development environment.
 
 ## Overview
 
-Space Rocks uses a server-authoritative gameplay model. The Godot client presents the game and sends player input. The Go game server owns realtime gameplay simulation and authoritative match state. The Rails API server owns backend HTTP concerns such as account, auth, and platform services.
+```text
+Godot client              Go realtime game server              Rails API
+presentation + input      authoritative simulation             accounts + auth
+rendering + UI            match + world state                  platform services
+```
+
+The architecture is deliberately server-authoritative: clients submit player intent while the Go game server owns gameplay truth. Shared contracts and generated data keep the Godot, Go, and Rails surfaces aligned across service boundaries.
 
 This README is the repository front door. For setup, local development workflow, tools, and handoff notes, start with [Developer onboarding](docs/developer.md).
 
